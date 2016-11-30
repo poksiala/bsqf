@@ -15,8 +15,8 @@ class Parser:
             else:
                 self.data += cleaned_line
         f.close()
-        self.blocks = self.parse_to_blocks(self.data)
-        self.ebin = self.blockify(self.blocks)
+
+        self.blocks = self.blockify(self.parse_to_blocks(self.data))
 
 
     def parse_to_blocks(self, string):
@@ -80,14 +80,7 @@ class Parser:
                     clear_data.append(returned_data)
         return clear_data
 
-    def recursive_print(self, data, level=0):
-        INDENT = 4
-        from types import StringType
-        for i in range(0, len(data)):
-            if type(data[i]) == StringType:
-                print " " * INDENT * level + data[i]
-            else:
-                self.recursive_print(data[i], level+1)
+
 
     def blockify(self, blocks):
         from types import StringType
@@ -102,9 +95,11 @@ class Parser:
         return block
 
     def write_out(self):
-        self.recursive_print(self.blocks)
-        print(self.ebin)
+        from util import recursive_print
+        recursive_print(self.blocks)
+        print(self.blocks)
 
 if __name__ == "__main__":
+
     a = Parser(FILENAME)
     a.write_out()

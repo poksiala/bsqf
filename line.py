@@ -22,3 +22,8 @@ class Line(Element):
         """
         return self.line + ";"
 
+    def __len__(self):
+        return len(self.line)
+
+    def __getitem__(self, item):
+        return self.line[item]

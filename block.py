@@ -54,4 +54,10 @@ class Block(Element):
         str += "}"
         return str
 
+    def __len__(self):
+        return len(self.content)
+
+    def __getitem__(self, item):
+        return self.content[item]
+
 
