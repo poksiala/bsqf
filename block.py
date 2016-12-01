@@ -48,10 +48,12 @@ class Block(Element):
 
         :return: String
         """
-        str = "{"
+        str = ""
         for element in self.content:
             str += element.write_out()
-        str += "}"
+
+        if self.get_level() > 0:
+            str = self.indent() + "{\n" + str +self.indent() + "}\n"
         return str
 
     def __len__(self):

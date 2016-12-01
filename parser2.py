@@ -1,4 +1,5 @@
 from main import *
+
 from line import Line
 from block import Block
 FILENAME = "testidata.bsqf"
@@ -96,7 +97,6 @@ class Parser:
 
     def write_out(self):
         from util import recursive_print
-        recursive_print(self.blocks)
         print(self.blocks)
 
 if __name__ == "__main__":

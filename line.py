@@ -1,4 +1,7 @@
 from elements import Element
+
+
+
 class Line(Element):
 
     def __init__(self, line):
@@ -20,7 +23,7 @@ class Line(Element):
 
         :return: String
         """
-        return self.line + ";"
+        return self.indent() + self.line + ";\n"
 
     def __len__(self):
         return len(self.line)
