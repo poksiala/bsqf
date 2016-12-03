@@ -166,3 +166,39 @@ class WhileElement(ControlElement):
         else:
             return "while ( {} ) ".format(self.condition.write_out(),
                                           self.block.write_out())
+
+
+class HintElement(CommandElement):
+
+    def __init__(self, param: GenericElement):
+
+        if param.type != self.STR and param.type != self.VARIABLE:
+            self.input_warning()
+        self.param = param
+        self.type = self.VOID
+
+    def write_out(self, sqf=False):
+        if sqf:
+            return "hint {}".format(self.param.write_sqf())
+        else:
+            return "hint({})".format(self.param.write_out())
+
+class RandomElement(CommandElement):
+
+    def __init__(self, param1: GenericElement, param2: GenericElement):
+        if param1.type != self.NUM and param1.type != self.VARIABLE:
+            self.input_warning()
+        if param2.type != self.NUM and param2.type != self.VARIABLE:
+            self.input_warning()
+        self.param1 = param1
+        self.param2 = param2
+        self.type = self.NUM
+
+    def write_out(self, sqf=False):
+        if sqf:
+            return "({} + floor random ({} - {}))".format(self.param1.write_sqf(),
+                                                           self.param2.write_sqf(),
+                                                           self.param1.write_sqf())
+        else:
+            return "random({},{})".format(self.param1.write_out(),
+                                          self.param2.write_out())
