@@ -25,12 +25,6 @@ class LineParser:
             if looking_for == "str":
                 if not line[i].isalnum():
                     end = i
-            if looking_for == "'":
-                if line[i] == "'":
-                    end = i + 1
-            if looking_for == '"':
-                if line[i] == '"':
-                    end = i + 1
             if looking_for == "operator":
                 if not line[i] in operators:
                     end = i
@@ -51,10 +45,6 @@ class LineParser:
                     looking_for = "int"
                 elif line[i].isalpha():
                     looking_for = "str"
-                elif line[i] == "'":
-                    looking_for = "'"
-                elif line[i] == '"':
-                    looking_for = '"'
                 elif line[i] in operators:
                     looking_for = "operator"
                 else:
@@ -82,8 +72,8 @@ class LineParser:
 
 
 if __name__ == "__main__":
-    line1 = 'hint("harh" + "asd")'
-    line2 = "lol = random(1, 2)"
+    line1 = 'hint  ("harh " + "asd")'
+    line2 = "lol = random (1, 2)"
     print(LineParser(line1))
     print(LineParser(line2))
 
