@@ -55,6 +55,9 @@ class GenericElement(metaclass=ABCMeta):
     VECT = "Vector"
     VOID = "Void"
 
+    ANY = "AnyType"
+    VARIABLE = "Variable"
+
     @abstractmethod
     def write_out(self, sqf=False):
         pass
@@ -69,7 +72,7 @@ class GenericElement(metaclass=ABCMeta):
         return self.type
 
 
-class CodeElement(GenericElement):
+class CodeElement(GenericElement, metaclass=ABCMeta):
     pass
 
 
@@ -91,4 +94,13 @@ class SelectElement(CommandElement):
                                            self.index.write_sqf())
         else:
             return "{}[{}]".format(self.array.write_out(),
-                               self.index.write_out())
+                                   self.index.write_out())
+
+
+class VariableElement(GenericElement):
+    def __init__(self, name: str):
+        self.name = name
+        self.type = self.VARIABLE
+
+    def write_out(self, sqf=False):
+        return self.name

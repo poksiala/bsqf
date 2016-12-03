@@ -4,10 +4,13 @@ from abc import abstractproperty
 class CompareElement(CommandElement):
 
     def __init__(self, a: GenericElement, b: GenericElement):
+        if a.type != b.type and a.type is not self.VARIABLE \
+                and b.type is not self.VARIABLE:
+            self.input_warning()
+
         self.a = a
         self.b = b
-        if self.a.type != self.b.type:
-            self.input_warning()
+
         self.type = self.BOOL
 
     def write_out(self, sqf=False):
