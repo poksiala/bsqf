@@ -26,6 +26,7 @@ class CodeSegment:
 
 
 class GenericElement(metaclass=ABCMeta):
+
     type = None
 
     # Types from OFP
@@ -52,6 +53,7 @@ class GenericElement(metaclass=ABCMeta):
     ORIENT = "Orient"
     TARGET = "Target"
     VECT = "Vector"
+    VOID = "Void"
 
     @abstractmethod
     def write_out(self, sqf=False):
@@ -71,13 +73,19 @@ class CodeElement(GenericElement):
     pass
 
 
-class CommandElement(CodeElement):
-    pass
+class CommandElement(CodeElement, metaclass=ABCMeta):
+
+    @abstractmethod
+    def validate_input_types(self):
+        pass
+
+    def input_warning(self):
+        pass
 
 
 class SelectElement(CommandElement):
 
-    def __init__(self,array, index):
+    def __init__(self, array: GenericElement, index: GenericElement):
         self.array = array
         self.index = index
 

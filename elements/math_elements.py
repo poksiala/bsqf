@@ -1,14 +1,11 @@
-from elements.code_elements import CommandElement
+from elements.code_elements import CommandElement, GenericElement
 
 
 class MathElement(CommandElement):
 
-    def __init__(self, a, b):
+    def __init__(self, a: GenericElement, b: GenericElement):
         self.a = a
         self.b = b
-
-    def write_sqf(self):
-        self.write_out(sqf=True)
 
 
 class PlusElement(MathElement):
@@ -60,3 +57,4 @@ class RemainderElement(MathElement):
         else:
             return "{} % {}".format(self.a.write_out(),
                                     self.b.write_out())
+
