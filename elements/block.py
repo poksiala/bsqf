@@ -1,7 +1,7 @@
-from elements import Element
+from code_elements import CodeElement
 
 
-class Block(Element):
+class Block(CodeElement):
 
     def __init__(self):
         """Block
@@ -44,7 +44,7 @@ class Block(Element):
 
         Formats blocks content to string and returns it.
         Curly braces ({}) are added to beginning and to end
-        of the string
+        of the string except for the outermost level
 
         :return: String
         """

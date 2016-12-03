@@ -1,8 +1,7 @@
-from elements import Element
+from code_elements import CodeElement
 
 
-
-class Line(Element):
+class Line(CodeElement):
 
     def __init__(self, line):
         """Line

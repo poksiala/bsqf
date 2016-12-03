@@ -1,0 +1,19 @@
+// luku kertoo jotain
+
+luku = floor random 5
+
+if (luku > 2) then {
+    hint "yli";
+    hint "poo";
+} else {
+    if (luku <2) then {
+        n = 0;
+        while {n < 4} do {
+            hint str n;
+            n = n + 1;
+        }
+    } else {
+        hint "oikein";1
+    }
+}
+hint "kek"

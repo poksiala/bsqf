@@ -1,6 +1,7 @@
-from config import *
+from utils.config import *
 
-class Element:
+
+class CodeElement:
 
     def set_parent(self, parent):
         self.parent = parent
