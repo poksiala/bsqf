@@ -75,10 +75,6 @@ class CodeElement(GenericElement):
 
 class CommandElement(CodeElement, metaclass=ABCMeta):
 
-    @abstractmethod
-    def validate_input_types(self):
-        pass
-
     def input_warning(self):
         pass
 
