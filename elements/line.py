@@ -15,7 +15,7 @@ class Line(CodeSegment):
         self.parent = None
 
 
-    def write_out(self):
+    def write_out(self, sqf=False):
         """Write out
 
         returns line contents with ; added to the end.

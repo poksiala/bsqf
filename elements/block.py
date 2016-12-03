@@ -38,7 +38,7 @@ class Block(CodeSegment):
         for element in element_list:
             self.add_element(element)
 
-    def write_out(self):
+    def write_out(self, sqf=False):
         """Write out
 
         Formats blocks content to string and returns it.
@@ -49,7 +49,7 @@ class Block(CodeSegment):
         """
         str = ""
         for element in self.content:
-            str += element.write_out()
+            str += element.write_out(sqf)
 
         if self.get_level() > 0:
             str = self.indent() + "{\n" + str +self.indent() + "}\n"
