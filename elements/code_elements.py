@@ -1,7 +1,10 @@
+from abc import ABCMeta, abstractmethod
+
 from utils.config import *
 
 
 class CodeSegment:
+    parent = None
 
     def set_parent(self, parent):
         self.parent = parent
@@ -21,7 +24,10 @@ class CodeSegment:
     def __str__(self):
         return self.write_out()
 
-class GenericElement:
+
+class GenericElement(metaclass=ABCMeta):
+    type = None
+
     # Types from OFP
     STR = "String"
     ARRAY = "Array"
@@ -47,29 +53,30 @@ class GenericElement:
     TARGET = "Target"
     VECT = "Vector"
 
+    @abstractmethod
+    def write_out(self, sqf=False):
+        pass
+
+    def write_sqf(self):
+        return self.write_out(sqf=True)
+
+    def __str__(self):
+        return self.write_out()
 
     def get_type(self):
         return self.type
 
 
 class CodeElement(GenericElement):
-
-    def __str__(self):
-        self.write_out()
+    pass
 
 class StringElement(GenericElement):
 
     def __init__(self, string):
         self.string = string
 
-    def return_type(self):
-        return
-
-    def SQF(self):
-        return '"' + self.string + '"'
-
-    def write_out(self):
-        return self.string
+    def write_out(self, sqf=False):
+        return '"{}"'.format(self.string)
 
 class CommandElement(CodeElement):
     pass
@@ -85,11 +92,8 @@ class NumberElement(GenericElement):
         self.number = number
         self.type = self.NUM
 
-    def SQF(self):
-        return str(self.number)
-
-    def write_out(self):
-        return str(self.number)
+    def write_out(self, sqf=False):
+        return "".format(self.number)
 
 class SelectElement(CommandElement):
 
@@ -97,44 +101,10 @@ class SelectElement(CommandElement):
         self.array = array
         self.index = index
 
-    def write_out(self):
-        return "{}[{}]".format(self.array.write_out(),
+    def write_out(self, sqf=False):
+        if sqf:
+            return "({} select {})".format(self.array.write_sqf(),
+                                           self.index.write_sqf())
+        else:
+            return "{}[{}]".format(self.array.write_out(),
                                self.index.write_out())
-
-    def SQF(self):
-        return "({})".format(self.array.write_out(),
-                             self.index.write_out())
-
-class MathElement(CommandElement):
-
-    def __init__(self, a, b):
-        self.a = a
-        self.b = b
-
-    def SQF(self):
-        return "({})".format(self.write_out())
-
-class PlusElement(MathElement):
-    def write_out(self):
-        return "{} + {}".format(self.a.write_out(),
-                                self.b.write_out())
-
-class MinusElement(MathElement):
-    def write_out(self):
-        return "{} - {}".format(self.a.write_out(),
-                                self.b.write_out())
-
-class DivideElement(MathElement):
-    def write_out(self):
-        return "{} / {}".format(self.a.write_out(),
-                                self.b.write_out())
-
-class MultiplyElement(MathElement):
-    def write_out(self):
-        return "{} * {}".format(self.a.write_out(),
-                                self.b.write_out())
-
-class RemainderElement(MathElement):
-    def write_out(self):
-        return "{} % {}".format(self.a.write_out(),
-                                self.b.write_out())
