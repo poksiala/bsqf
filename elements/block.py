@@ -1,7 +1,6 @@
-from code_elements import CodeElement
+from elements.code_elements import CodeSegment
 
-
-class Block(CodeElement):
+class Block(CodeSegment):
 
     def __init__(self):
         """Block

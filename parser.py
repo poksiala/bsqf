@@ -68,10 +68,9 @@ class Parser:
         :param data: Multidimensional list containing strings
         :return: Multidimensional list containing strings
         """
-        from types import StringType
         clear_data = []
         for i in range(0, len(data)):
-            if type(data[i]) == StringType:
+            if type(data[i]) == str:
                 if data[i] != "":
                     clear_data.append(data[i])
             else:
@@ -82,10 +81,9 @@ class Parser:
 
 
     def blockify(self, blocks):
-        from types import StringType
         element_list = []
         for element in blocks:
-            if type(element) == StringType:
+            if type(element) == str:
                 element_list.append(Line(element))
             else:
                 element_list.append(self.blockify(element))

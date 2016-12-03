@@ -1,7 +1,7 @@
-from code_elements import CodeElement
+from elements.code_elements import CodeSegment
 
 
-class Line(CodeElement):
+class Line(CodeSegment):
 
     def __init__(self, line):
         """Line
