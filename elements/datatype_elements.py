@@ -35,7 +35,7 @@ class NumberElement(GenericElement):
         self.type = self.NUM
 
     def write_out(self, sqf=False):
-        return "".format(self.number)
+        return "{}".format(self.number)
 
 
 class BooleanElement(GenericElement):

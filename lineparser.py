@@ -1,11 +1,16 @@
-from utils.commands import COMMANDS
+from utils.commands import COMMANDS, MATH_COMMANDS
+from elements.datatype_elements import StringElement, NumberElement
+from elements.code_elements import VariableElement, GenericElement
+from utils.util import recursive_print, flatten
 
 class LineParser:
 
     def __init__(self, line: str):
         #self.line = self.parse_line(line)
         self.segmented_line = self.divide_into_segments(line)
-
+        self.mixed_list = self.get_literal_elements(self.segmented_line)
+        self.hierarchy = self.get_hierarchy(self.mixed_list)
+        self.command = self.get_commands(self.hierarchy)
     def parse_line(self):
 
 
@@ -39,7 +44,7 @@ class LineParser:
 
             if looking_for is None:
                 start = i
-                if line[i].isspace():
+                if line[i].isspace() or line[i] == ",":
                     start = -1
                 elif line[i].isdigit():
                     looking_for = "int"
@@ -55,29 +60,131 @@ class LineParser:
 
         return segment_list
 
+    def get_literal_elements(self, segment_list: list):
+        # get string elements
+        new_list = []
+        to_be_joined = []
+        in_string = False
+        for segment in segment_list:
+            if segment == '"':
+                if not in_string:
+                    in_string = True
+                else:
+                    in_string = False
+                    new_list.append(StringElement(' '.join(to_be_joined)))
+                    to_be_joined = []
+            elif not in_string:
+                new_list.append(segment)
+            else:
+                to_be_joined.append(segment)
+
+        # get number elements and variables
+        another_list = []
+        for segment in new_list:
+            if type(segment) is str:
+                if segment.isdigit():
+                    another_list.append(NumberElement(segment))
+                elif segment.isalnum() and segment.lower() not in COMMANDS.keys() \
+                        and segment.lower() not in MATH_COMMANDS.keys():
+                    another_list.append(VariableElement(segment))
+                else:
+                    another_list.append(segment)
+            else:
+                another_list.append(segment)
+
+        return another_list
+
+    def get_hierarchy(self, segment_list):
+        element_list = []
+        index = 0
+        in_sublist = 0
+        while index < len(segment_list):
+            if in_sublist == 0:
+                if segment_list[index] == "(":
+                    in_sublist += 1
+                    returned_list = self.get_hierarchy(segment_list[index+1:])
+                    element_list.append(returned_list)
+                elif segment_list[index] == ")":
+                    return element_list
+                else:
+                    element_list.append(segment_list[index])
+
+            elif segment_list[index] == "(":
+                in_sublist += 1
+            elif segment_list[index] == ")":
+                in_sublist -= 1
+            else:
+                pass
+            index += 1
+        return element_list
+
+    def get_commands(self, hl: list):
+        #print("\nget_commands:")
+        #recursive_print(hl)
+        i = 0
+        command_list =[]
+        while i < len(hl):
+
+            if type(hl[i]) is list:
+                command_list.append(self.get_commands(hl[i]))
+            elif type(hl[i]) is str:
+                if hl[i] in COMMANDS.keys():
+                    command_list.append(self.create_command(hl[i], self.get_commands(hl[i+1])))
+                    i += 1
+                elif hl[i] in MATH_COMMANDS.keys():
+                    right = None
+                    asd = hl[i]
+                    if isinstance(hl[i+1], GenericElement):
+                        right = hl[i+1]
+                    elif type(hl[i+1]) is list:
+                        right = self.get_commands(hl[i+1])
+                    else:
+                        right = self.get_commands(hl[i+1:])
+                        i = len(hl)
+                    command_list.append(
+                        self.create_math_command(asd,
+                                             command_list.pop(),
+                                             right))
+                    i += 1
+
+                else:
+                    command_list.append(hl[i])
+            else:
+                command_list.append(hl[i])
+
+            i+=1
+        return command_list
 
 
-    def find_end_of_string_literal(self, line: str, mark: str):
-        return line.index(str)
 
+    def create_command(self, command, params):
+        args = flatten(params)
+        print("creating command: {}({})".format(str(command), str(args)))
+        return COMMANDS[command](*args)
 
-    def is_command(self, string: str):
-        if string in COMMANDS.keys():
-            return True
-        else:
-            return False
+    def create_math_command(self, command, left, right):
+        args = flatten([left, right])
 
-    def __str__(self):
-        return str(self.segmented_line)
+        print("creating math command: {} {} {}".format(str(args[0]), str(command), str(args[1])))
+
+        return MATH_COMMANDS[command](*args)
+
+    def write_out(self):
+        return  self.command[0].write_out()
 
 
 if __name__ == "__main__":
-    line1 = 'hint  ("harh " + "asd")'
-    line2 = "lol = random (1, 2)"
-    print(LineParser(line1))
-    print(LineParser(line2))
+    test_lines = [
+        #'hint("asd")',
+        #'random(random(1, 2),random(4,5))',
+        #'1 + 2 + 3 + 4',
+        #'"asd" + "kek"',
+        'random(((1))+(2),(((3))+(2)))',
+        'random((1),((2)))'
+    ]
 
-
-
-
-
+    for line in test_lines:
+        a = LineParser(line).command
+        print("#######")
+        print(a)
+        recursive_print(a)

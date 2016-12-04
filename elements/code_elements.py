@@ -25,7 +25,8 @@ class CodeSegment:
         return self.write_out(sqf=True)
 
     def __str__(self):
-        return self.write_out()
+        string = self.write_out()
+        return str(string)
 
 
 class GenericElement(metaclass=ABCMeta):
@@ -62,13 +63,13 @@ class GenericElement(metaclass=ABCMeta):
     VARIABLE = "Variable"
 
     @abstractmethod
-    def write_out(self, sqf=False):
+    def write_out(self, sqf=False) -> str:
         pass
 
     def write_sqf(self):
         return self.write_out(sqf=True)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.write_out()
 
     def get_type(self):
@@ -106,7 +107,7 @@ class VariableElement(GenericElement):
         self.name = name
         self.type = self.VARIABLE
 
-    def write_out(self, sqf=False):
+    def write_out(self, sqf=False) -> str:
         return self.name
 
 

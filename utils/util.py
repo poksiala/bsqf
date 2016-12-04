@@ -6,9 +6,21 @@ def recursive_print(data, level=0, indent=4):
     :param indent: Indent width, Int
     :return: None
     """
-    from types import StringType
     for i in range(0, len(data)):
-        if type(data[i]) == StringType:
-            print " " * indent * level + data[i]
+        if type(data[i]) is not list:
+            print(" " * indent * level + str(data[i]))
         else:
             recursive_print(data[i], level + 1)
+
+def flatten(l: list) -> list:
+    if type(l) is not list:
+        return [l]
+    a = []
+    for i in l:
+        if type(i) == list:
+            for x in flatten(i):
+                a.append(x)
+        else:
+            a.append(i)
+    return a
+

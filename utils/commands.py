@@ -10,7 +10,11 @@ COMMANDS = {
     "if": IfElement,
     "elif": ElifElement,
     "else": ElseElement,
+}
+MATH_COMMANDS = {
     ">": GreaterElement,
     "<": LessElement,
-    "=": SetElement
+    "=": SetElement,
+    "+": PlusElement,
+    "-": MinusElement
 }
