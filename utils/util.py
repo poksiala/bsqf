@@ -1,3 +1,7 @@
+from utils.commands import PRE_BLOCK_COMMANDS
+
+
+
 def recursive_print(data, level=0, indent=4):
     """Recursive list print
 
@@ -12,6 +16,7 @@ def recursive_print(data, level=0, indent=4):
         else:
             recursive_print(data[i], level + 1)
 
+
 def flatten(l: list) -> list:
     if type(l) is not list:
         return [l]
@@ -23,4 +28,14 @@ def flatten(l: list) -> list:
         else:
             a.append(i)
     return a
+
+
+def is_pre_block_command(line):
+    from elements.line import Line
+    if isinstance(line, Line):
+        if isinstance(line.command, PRE_BLOCK_COMMANDS):
+            return True
+
+    return False
+
 

@@ -1,17 +1,11 @@
 # luku kertoo jotain
 
-luku = random(0, 5);
-
-if (luku > 2) {
-    hint("yli");
-    hint("poo");
-} elif (luku < 2) {
-    n = 0;
-    while (n < 4) {
-        hint(n);
-        n = n + 1;
-    }
+lol = 4;
+asd = random(1, 6);
+if (lol == 4) {
+    hint("toimii")
+} elif (lol == 3) {
+    hint("no ei ihan");
 } else {
-    hint("oikein")
+    hint("not amused")
 }
-hint("kek")

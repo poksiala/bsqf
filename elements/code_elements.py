@@ -3,7 +3,7 @@ from abc import ABCMeta, abstractmethod
 from utils.config import *
 
 
-class CodeSegment:
+class CodeSegment(metaclass=ABCMeta):
     parent = None
 
     def set_parent(self, parent):
@@ -18,6 +18,7 @@ class CodeSegment:
     def indent(self):
         return " " * INDENT_WIDTH * self.get_level()
 
+    @abstractmethod
     def write_out(self, sqf=False):
         pass
 
@@ -31,6 +32,8 @@ class CodeSegment:
 
 class GenericElement(metaclass=ABCMeta):
 
+    parent = None
+
     type = None
 
     # Types from OFP
@@ -41,6 +44,7 @@ class GenericElement(metaclass=ABCMeta):
     NUM = "Number"
     OBJ = "Object"
     SIDE = "Side"
+
     # Types from ARMA
     CODE = "Code"
     CONF = "Config"
@@ -48,6 +52,7 @@ class GenericElement(metaclass=ABCMeta):
     DISP = "Display"
     SCRPT = "Script(Handle)"
     STRUCTURED = "Structured Text"
+
     # Types from ARMA2
     DIARY = "Diary_Record"
     TASK = "Task"
@@ -65,6 +70,9 @@ class GenericElement(metaclass=ABCMeta):
     @abstractmethod
     def write_out(self, sqf=False) -> str:
         pass
+
+    def set_parent(self, parent):
+        self.parent = parent
 
     def write_sqf(self):
         return self.write_out(sqf=True)
@@ -124,39 +132,47 @@ class SetElement(CommandElement):
 
 
 class ControlElement(CommandElement, metaclass=ABCMeta):
-    from elements.block import Block
 
-    def __init__(self, condition: GenericElement, block: Block):
+    def __init__(self, condition: GenericElement):
         if condition.type != self.VARIABLE and condition.type != self.BOOL:
             self.input_warning()
         self.condition = condition
+        self.block = None
+
+    def set_block(self, block):
         self.block = block
+        self.block.set_parent(self.parent)
 
 
 class IfElement(ControlElement):
 
     def write_out(self, sqf=False):
-        return "if ({}) then {}".format(self.condition.write_out(sqf),
-                                        self.block.write_out(sqf))
+        if sqf:
+            return "if ({}) then\n {} ".format(self.condition.write_sqf(),
+                                               self.block.write_sqf())
+        else:
+            return "if ({})\n {}".format(self.condition.write_out(),
+                                         self.block.write_out())
 
 
 class ElseElement(ControlElement):
-    from elements.block import Block
 
-    def __init__(self, block: Block):
-        self.block = block
+    def __init__(self):
+        self.block = None
 
     def write_out(self, sqf=False):
-        return "else {}".format(self.block.write_out(sqf))
+        return "else\n {} ".format(self.block.write_out(sqf))
 
 
 class ElifElement(ControlElement):
 
     def write_out(self, sqf=False):
         if sqf:
-            return " else { if ({}) then {} }".format(self.condition.write_out(sqf),
-                                                      self.block.write_out(sqf))
-
+            return " else {{ if ({}) then\n {} }}".format(self.condition.write_sqf(),
+                                                          self.block.write_sqf())
+        else:
+            return "elif ({})\n {} ".format(self.condition.write_out(),
+                                          self.block.write_out())
 
 class WhileElement(ControlElement):
 

@@ -1,6 +1,7 @@
 from elements.block import Block
 from elements.line import Line
 from utils.config import FILENAME
+from utils.util import is_pre_block_command
 
 
 class Parser:
@@ -79,14 +80,20 @@ class Parser:
                     clear_data.append(returned_data)
         return clear_data
 
-
     def blockify(self, blocks):
         element_list = []
         for element in blocks:
             if type(element) == str:
                 element_list.append(Line(element))
+                print("added line element")
             else:
-                element_list.append(self.blockify(element))
+                print("adding block")
+                new_block = self.blockify(element)
+                if element_list and is_pre_block_command(element_list[-1]):
+                    print("found")
+                    element_list[-1].command.set_block(new_block)
+                else:
+                    element_list.append(new_block)
         block = Block()
         block.add_element_list(element_list)
         return block
@@ -96,5 +103,8 @@ class Parser:
 
 if __name__ == "__main__":
 
-    a = Parser(FILENAME)
-    a.write_out()
+    a = Parser(FILENAME).blocks
+    print("#### BSQF")
+    print(a.write_out())
+    print("#### SQF")
+    print(a.write_sqf())

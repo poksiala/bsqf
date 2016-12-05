@@ -1,4 +1,4 @@
-from utils.commands import COMMANDS, MATH_COMMANDS
+from utils.commands import COMMANDS, MATH_COMMANDS, NO_PARAM_COMMANDS, ALL_COMMANDS
 from elements.datatype_elements import StringElement, NumberElement
 from elements.code_elements import VariableElement, GenericElement
 from utils.util import recursive_print, flatten
@@ -10,7 +10,7 @@ class LineParser:
         self.segmented_line = self.divide_into_segments(line)
         self.mixed_list = self.get_literal_elements(self.segmented_line)
         self.hierarchy = self.get_hierarchy(self.mixed_list)
-        self.command = self.get_commands(self.hierarchy)
+        self.command = flatten(self.get_commands(self.hierarchy))[0]
     def parse_line(self):
 
 
@@ -84,8 +84,7 @@ class LineParser:
             if type(segment) is str:
                 if segment.isdigit():
                     another_list.append(NumberElement(segment))
-                elif segment.isalnum() and segment.lower() not in COMMANDS.keys() \
-                        and segment.lower() not in MATH_COMMANDS.keys():
+                elif segment.isalnum() and segment.lower() not in ALL_COMMANDS.keys():
                     another_list.append(VariableElement(segment))
                 else:
                     another_list.append(segment)
@@ -119,8 +118,6 @@ class LineParser:
         return element_list
 
     def get_commands(self, hl: list):
-        #print("\nget_commands:")
-        #recursive_print(hl)
         i = 0
         command_list =[]
         while i < len(hl):
@@ -146,7 +143,11 @@ class LineParser:
                                              command_list.pop(),
                                              right))
                     i += 1
-
+                elif hl[i] in NO_PARAM_COMMANDS.keys():
+                    command_list.append(
+                        NO_PARAM_COMMANDS[hl[i]]()
+                    )
+                    i+=1
                 else:
                     command_list.append(hl[i])
             else:
@@ -159,13 +160,13 @@ class LineParser:
 
     def create_command(self, command, params):
         args = flatten(params)
-        print("creating command: {}({})".format(str(command), str(args)))
+        #print("creating command: {}({})".format(str(command), str(args)))
         return COMMANDS[command](*args)
 
     def create_math_command(self, command, left, right):
         args = flatten([left, right])
 
-        print("creating math command: {} {} {}".format(str(args[0]), str(command), str(args[1])))
+        #print("creating math command: {} {} {}".format(str(args[0]), str(command), str(args[1])))
 
         return MATH_COMMANDS[command](*args)
 
@@ -175,16 +176,14 @@ class LineParser:
 
 if __name__ == "__main__":
     test_lines = [
-        #'hint("asd")',
-        #'random(random(1, 2),random(4,5))',
-        #'1 + 2 + 3 + 4',
-        #'"asd" + "kek"',
+        'hint("asd")',
+        'random(random(1, 2),random(4,5))',
+        '1 + 2 + 3 + 4',
+        '"asd" + "kek"',
         'random(((1))+(2),(((3))+(2)))',
         'random((1),((2)))'
     ]
 
     for line in test_lines:
         a = LineParser(line).command
-        print("#######")
-        print(a)
-        recursive_print(a)
+        print(a.write_sqf())
