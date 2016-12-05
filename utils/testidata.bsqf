@@ -9,5 +9,10 @@ if (lol == 4) {
 } elif (asd == 2) {
     hint("Lykky!");
 } else {
-    hint("not amused")
+    hint("not amused");
+}
+{
+kek = abs(1);
+kek = abs("kek");
+hint(primaryWeapon(player));
 }

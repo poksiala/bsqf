@@ -10,26 +10,49 @@ COMMANDS = {
     "while": WhileElement,
     "if": IfElement,
     "elif": ElifElement,
+    "ammo": AmmoElement,
+    "primaryWeapon": PrimaryWeaponElement,
+    "abs": AbsElement,
+    "mod": RemainderElement,
+    "ceil": CeilElement,
+    "floor": FloorElement,
+    "cos": CosElement,
+    "acos": AcosElement,
+    "sin": SinElement,
+    "asin": AsinElement,
+    "tan": TanElement,
+    "atan": AtanElement,
+    "sqrt": SqrtElement,
+    "ln": LnElement,
+    "exp": ExpElement,
+    "deg": DegElement,
+    "rad": RadElement,
+    "log": LogElement,
+    "round": RoundElement,
 }
 
 
-MATH_COMMANDS = {
+TWO_SIDED_COMMANDS = {
     ">": GreaterElement,
     "<": LessElement,
     "=": SetElement,
     "+": PlusElement,
     "-": MinusElement,
     "==": EqualsElement,
-    "!=": NotEqualsElement
+    "!=": NotEqualsElement,
+    "%": RemainderElement,
+    "^": PowerElement,
+    "**": PowerElement
 }
 
 
 NO_PARAM_COMMANDS = {
     "else": ElseElement,
+    "player": PlayerElement,
 }
 
 
-ALL_COMMANDS = merge_two_dicts(COMMANDS, merge_two_dicts(MATH_COMMANDS, NO_PARAM_COMMANDS))
+ALL_COMMANDS = merge_two_dicts(COMMANDS, merge_two_dicts(TWO_SIDED_COMMANDS, NO_PARAM_COMMANDS))
 
 
 PRE_BLOCK_COMMANDS = (

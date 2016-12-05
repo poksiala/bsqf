@@ -1,7 +1,7 @@
 from elements.code_elements import GenericElement, VariableElement
 from elements.code_segment import CodeSegment
 from elements.datatype_elements import StringElement, NumberElement
-from utils.commands import COMMANDS, MATH_COMMANDS, NO_PARAM_COMMANDS, ALL_COMMANDS, PRE_BLOCK_COMMANDS
+from utils.commands import COMMANDS, TWO_SIDED_COMMANDS, NO_PARAM_COMMANDS, ALL_COMMANDS, PRE_BLOCK_COMMANDS
 from utils.util import flatten
 
 
@@ -109,7 +109,7 @@ def get_commands(hl: list):
             if hl[i] in COMMANDS.keys():
                 command_list.append(create_command(hl[i], get_commands(hl[i+1])))
                 i += 1
-            elif hl[i] in MATH_COMMANDS.keys():
+            elif hl[i] in TWO_SIDED_COMMANDS.keys():
                 asd = hl[i]
                 if isinstance(hl[i+1], GenericElement):
                     right = hl[i+1]
@@ -230,7 +230,7 @@ def get_literal_elements(segment_list: list) -> list:
         if type(segment) is str:
             if segment.isdigit():
                 another_list.append(NumberElement(segment))
-            elif segment.isalnum() and segment.lower() not in ALL_COMMANDS.keys():
+            elif segment.isalnum() and segment not in ALL_COMMANDS.keys():
                 another_list.append(VariableElement(segment))
             else:
                 another_list.append(segment)
@@ -241,15 +241,23 @@ def get_literal_elements(segment_list: list) -> list:
 
 
 def create_command(command: str, params):
+
     args = flatten(params)
-    # print("creating command: {}({})".format(str(command), str(args)))
-    return COMMANDS[command](*args)
+    try:
+        return COMMANDS[command](*args)
+    except TypeError:
+        print("### ERROR WHILE:")
+        print("creating command: {}({})".format(str(command), str(args)))
 
 
 def create_math_command(command: str, left, right):
     args = flatten([left, right])
-    # print("creating math command: {} {} {}".format(str(args[0]), str(command), str(args[1])))
-    return MATH_COMMANDS[command](*args)
+    try:
+        return TWO_SIDED_COMMANDS[command](*args)
+    except TypeError:
+        print("### ERROR WHILE:")
+        print("creating math command: {} {} {}".format(str(args[0]), str(command), str(args[1])))
+        print("all args: ", str(args))
 
 
 if __name__ == "__main__":

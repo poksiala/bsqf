@@ -1,11 +1,12 @@
 from elements.code_elements import GenericElement
+from elements.return_types import *
 
 
 class StringElement(GenericElement):
+    return_type = STR
 
     def __init__(self, string: str):
         self.string = self._clean_string(string)
-        self.type = self.STR
 
     def _clean_string(self, string):
         return string.replace('"', '""')
@@ -15,9 +16,9 @@ class StringElement(GenericElement):
 
 
 class ArrayElement(GenericElement):
+    return_type = ARRAY
 
     def __init__(self):
-        self.type = self.ARRAY
         self.contents = []
 
     def write_out(self, sqf=False):
@@ -29,20 +30,20 @@ class ArrayElement(GenericElement):
 
 
 class NumberElement(GenericElement):
+    return_type = NUM
 
     def __init__(self, number: GenericElement):
         self.number = number
-        self.type = self.NUM
 
     def write_out(self, sqf=False):
         return "{}".format(self.number)
 
 
 class BooleanElement(GenericElement):
+    return_type = BOOL
 
     def __init__(self, value: bool):
         self.value = value
-        self.type = self.BOOL
 
     def write_out(self, sqf=False):
         if sqf:

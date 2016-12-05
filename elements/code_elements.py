@@ -1,41 +1,14 @@
-from abc import ABCMeta, abstractmethod
+from abc import ABCMeta, abstractmethod, abstractproperty
+from elements.return_types import *
 
 
 class GenericElement(metaclass=ABCMeta):
 
     parent = None
-    type = None
 
-    # Types from OFP
-    STR = "String"
-    ARRAY = "Array"
-    BOOL = "Boolean"
-    GROUP = "Group"
-    NUM = "Number"
-    OBJ = "Object"
-    SIDE = "Side"
-
-    # Types from ARMA
-    CODE = "Code"
-    CONF = "Config"
-    CTRL = "Control"
-    DISP = "Display"
-    SCRPT = "Script(Handle)"
-    STRUCTURED = "Structured Text"
-
-    # Types from ARMA2
-    DIARY = "Diary_Record"
-    TASK = "Task"
-    TEAM_MEMBER = "Team_Member"
-    NAMESPACE = "Namespace"
-    TRANS = "Trans"
-    ORIENT = "Orient"
-    TARGET = "Target"
-    VECT = "Vector"
-    VOID = "Void"
-
-    ANY = "AnyType"
-    VARIABLE = "Variable"
+    @abstractproperty
+    def return_type(self):
+        return ANY
 
     @abstractmethod
     def write_out(self, sqf=False) -> str:
@@ -51,39 +24,21 @@ class GenericElement(metaclass=ABCMeta):
         return self.write_out()
 
     def get_type(self):
-        return self.type
+        return self.return_type
 
 
-class CodeElement(GenericElement, metaclass=ABCMeta):
-    pass
-
-
-class CommandElement(CodeElement, metaclass=ABCMeta):
+class CommandElement(GenericElement, metaclass=ABCMeta):
 
     def input_warning(self, error: str="input error"):
         print(error)
 
 
-class SelectElement(CommandElement):
-
-    def __init__(self, array: GenericElement, index: GenericElement):
-        self.array = array
-        self.index = index
-
-    def write_out(self, sqf=False):
-        if sqf:
-            return "({} select {})".format(self.array.write_sqf(),
-                                           self.index.write_sqf())
-        else:
-            return "{}[{}]".format(self.array.write_out(),
-                                   self.index.write_out())
-
-
 class VariableElement(GenericElement):
+
+    return_type = VARIABLE
 
     def __init__(self, name: str):
         self.name = name
-        self.type = self.VARIABLE
 
     def write_out(self, sqf=False) -> str:
         return self.name
@@ -91,10 +46,11 @@ class VariableElement(GenericElement):
 
 class SetElement(CommandElement):
 
+    return_type = VOID
+
     def __init__(self, left: VariableElement, right: GenericElement):
         self.left = left
         self.right = right
-        self.type = self.VOID
 
     def write_out(self, sqf=False):
         return "{} = {}".format(self.left.write_out(sqf),
@@ -103,8 +59,12 @@ class SetElement(CommandElement):
 
 class ControlElement(CommandElement, metaclass=ABCMeta):
 
+    @property
+    def return_type(self):
+        return VOID
+
     def __init__(self, condition: GenericElement):
-        if condition.type != self.VARIABLE and condition.type != self.BOOL:
+        if condition.return_type != VARIABLE and condition.return_type != BOOL:
             self.input_warning()
         self.condition = condition
         self.block = None
@@ -157,13 +117,12 @@ class WhileElement(ControlElement):
 
 
 class HintElement(CommandElement):
+    return_type = VOID
 
     def __init__(self, param: GenericElement):
-
-        if param.type != self.STR and param.type != self.VARIABLE:
+        if param.return_type != STR and param.return_type != VARIABLE:
             self.input_warning()
         self.param = param
-        self.type = self.VOID
 
     def write_out(self, sqf=False):
         if sqf:
@@ -174,14 +133,15 @@ class HintElement(CommandElement):
 
 class RandomElement(CommandElement):
 
+    return_type = NUM
+
     def __init__(self, param1: GenericElement, param2: GenericElement):
-        if param1.type != self.NUM and param1.type != self.VARIABLE:
+        if param1.return_type != NUM and param1.return_type != VARIABLE:
             self.input_warning()
-        if param2.type != self.NUM and param2.type != self.VARIABLE:
+        if param2.return_type != NUM and param2.return_type != VARIABLE:
             self.input_warning()
         self.param1 = param1
         self.param2 = param2
-        self.type = self.NUM
 
     def write_out(self, sqf=False):
         if sqf:
@@ -191,3 +151,150 @@ class RandomElement(CommandElement):
         else:
             return "random({},{})".format(self.param1.write_out(),
                                           self.param2.write_out())
+
+
+class NoParamElement(CommandElement, metaclass=ABCMeta):
+
+    @abstractproperty
+    def name(self):
+        return "methodName"
+
+    def write_out(self, sqf=False):
+        return " {} ".format(self.name)
+
+
+class PlayerElement(NoParamElement):
+    return_type = OBJ
+    name = "Player"
+
+
+class AmmoElement(CommandElement):
+    return_type = NUM
+
+    def __init__(self, unit: GenericElement, weapon: GenericElement):
+        if unit.return_type is not OBJ and unit.return_type is not VARIABLE:
+            self.input_warning()
+        if weapon.return_type is not STR and weapon.return_type is not VARIABLE:
+            self.input_warning()
+        self.a = unit
+        self.b = weapon
+
+    def write_out(self, sqf=False):
+        if sqf:
+            return " {} ammo {} ".format(self.a.write_sqf(), self.b.write_sqf())
+        else:
+            return "ammo({}, {})".format(self.a.write_out(), self.b.write_out())
+
+
+class SingleParameterElement(CommandElement, metaclass=ABCMeta):
+
+    def __init__(self, param1: GenericElement):
+        if param1.return_type is not VARIABLE and param1.return_type not in self.allowed_types:
+            self.input_warning()
+        self.param = param1
+
+    @abstractproperty
+    def allowed_types(self):
+        return [VARIABLE]
+
+    @abstractproperty
+    def name(self):
+        return "command"
+
+    def write_out(self, sqf=False):
+        if sqf:
+            return " {} {} ".format(self.name, self.param.write_sqf())
+        else:
+            return "{}({})".format(self.name, self.param.write_out())
+
+
+class PrimaryWeaponElement(SingleParameterElement):
+    name = "primaryWeapon"
+    return_type = STR
+    allowed_types = [OBJ]
+
+
+class ActionNameElement(SingleParameterElement):
+    name = "actionName"
+    return_type = STR
+    allowed_types = [STR]
+
+
+class IsPlayerElement(SingleParameterElement):
+    name = "isPlayer"
+    return_type = BOOL
+    allowed_types = [OBJ]
+
+
+class NumToNumElement(SingleParameterElement, metaclass=ABCMeta):
+    @property
+    def return_type(self):
+        return NUM
+
+    @property
+    def allowed_types(self):
+        return [NUM]
+
+
+class CeilElement(NumToNumElement):
+    name = "ceil"
+
+
+class FloorElement(NumToNumElement):
+    name = "floor"
+
+
+class AbsElement(NumToNumElement):
+    name = "abs"
+
+
+class AcosElement(NumToNumElement):
+    name = "acos"
+
+
+class CosElement(NumToNumElement):
+    name = "cos"
+
+
+class SinElement(NumToNumElement):
+    name = "sin"
+
+
+class AsinElement(NumToNumElement):
+    name = "asin"
+
+
+class TanElement(NumToNumElement):
+    name = "tan"
+
+
+class AtanElement(NumToNumElement):
+    name = "atan"
+
+
+class SqrtElement(NumToNumElement):
+    name = "sqrt"
+
+
+class LnElement(NumToNumElement):
+    name = "ln"
+
+
+class ExpElement(NumToNumElement):
+    name = "exp"
+
+
+class DegElement(NumToNumElement):
+    name = "deg"
+
+
+class RadElement(NumToNumElement):
+    name = "rad"
+
+
+class LogElement(NumToNumElement):
+    name = "log"
+
+
+class RoundElement(NumToNumElement):
+    name = "round"

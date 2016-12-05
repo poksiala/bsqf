@@ -1,8 +1,13 @@
 from elements.code_elements import CommandElement, GenericElement
 from abc import ABCMeta, abstractproperty
+from elements.return_types import NUM
 
 
 class MathElement(CommandElement, metaclass=ABCMeta):
+
+    @property
+    def return_type(self):
+        return NUM
 
     def __init__(self, a: GenericElement, b: GenericElement):
         self.a = a

@@ -1,18 +1,17 @@
 from elements.code_elements import GenericElement, CommandElement
 from abc import abstractproperty
+from elements.return_types import *
 
 
 class CompareElement(CommandElement):
 
     def __init__(self, a: GenericElement, b: GenericElement):
-        if a.type != b.type and a.type is not self.VARIABLE \
-                and b.type is not self.VARIABLE:
+        if a.return_type != b.return_type and a.return_type is not self.return_type \
+                and b.return_type is not self.return_type:
             self.input_warning()
 
         self.a = a
         self.b = b
-
-        self.type = self.BOOL
 
     def write_out(self, sqf=False):
         return "({} {} {})".format(self.a.write_out(sqf),
@@ -22,6 +21,10 @@ class CompareElement(CommandElement):
     @abstractproperty
     def sign(self):
         return "=="
+
+    @property
+    def return_type(self):
+        return BOOL
 
 
 class EqualsElement(CompareElement):
