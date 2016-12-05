@@ -1,4 +1,37 @@
-from elements.code_elements import CodeSegment
+from abc import ABCMeta, abstractmethod
+from utils.config import INDENT_WIDTH
+
+
+class CodeSegment(metaclass=ABCMeta):
+    parent = None
+
+    def set_parent(self, parent):
+        self.parent = parent
+
+    def get_level(self, level=0):
+        if self.parent is not None:
+            return self.parent.get_level(level+1)
+        else:
+            return level
+
+    def indent(self):
+        return " " * INDENT_WIDTH * self.get_level()
+
+    @abstractmethod
+    def write_out(self, sqf=False):
+        pass
+
+    @abstractmethod
+    def is_pre_block(self):
+        pass
+
+    def write_sqf(self):
+        return self.write_out(sqf=True)
+
+    def __str__(self):
+        string = self.write_out()
+        return str(string)
+
 
 class Block(CodeSegment):
 
@@ -47,18 +80,19 @@ class Block(CodeSegment):
 
         :return: String
         """
-        str = ""
+        string = ""
         for element in self.content:
-            str += element.write_out(sqf)
+            string += element.write_out(sqf)
 
         if self.get_level() > 0:
-            str = self.indent() + "{\n" + str +self.indent() + "}\n"
-        return str
+            string = self.indent() + "{\n" + string + self.indent() + "}\n"
+        return string
+
+    def is_pre_block(self):
+        return False
 
     def __len__(self):
         return len(self.content)
 
     def __getitem__(self, item):
         return self.content[item]
-
-

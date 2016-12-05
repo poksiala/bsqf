@@ -1,5 +1,3 @@
-from utils.commands import PRE_BLOCK_COMMANDS
-
 
 
 def recursive_print(data, level=0, indent=4):
@@ -18,6 +16,14 @@ def recursive_print(data, level=0, indent=4):
 
 
 def flatten(l: list) -> list:
+    """Flatten list
+
+    Returns one dimensional version of
+    multidimensional list given as a parameter.
+
+    :param l: multidimensional list
+    :return: list
+    """
     if type(l) is not list:
         return [l]
     a = []
@@ -30,12 +36,16 @@ def flatten(l: list) -> list:
     return a
 
 
-def is_pre_block_command(line):
-    from elements.line import Line
-    if isinstance(line, Line):
-        if isinstance(line.command, PRE_BLOCK_COMMANDS):
-            return True
+def merge_two_dicts(x: dict, y: dict) -> dict:
+    """Merge two dicts
 
-    return False
+    Merges two dictionaries together. Becomes obsolete
+    in Python version 3.5
 
-
+    :param x: dict
+    :param y: dict
+    :return: Merged dict
+    """
+    z = x.copy()
+    z.update(y)
+    return z

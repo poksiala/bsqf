@@ -1,6 +1,7 @@
 from elements.code_elements import GenericElement, CommandElement
 from abc import abstractproperty
 
+
 class CompareElement(CommandElement):
 
     def __init__(self, a: GenericElement, b: GenericElement):
@@ -26,23 +27,30 @@ class CompareElement(CommandElement):
 class EqualsElement(CompareElement):
     sign = "=="
 
+
 class NotEqualsElement(CompareElement):
     sign = "!="
+
 
 class AndElement(CompareElement):
     sign = "&&"
 
+
 class OrElement(CompareElement):
     sign = "||"
+
 
 class GreaterElement(CompareElement):
     sign = ">"
 
+
 class GreaterOrEqualElement(CompareElement):
     sign = ">="
 
+
 class LessElement(CompareElement):
     sign = "<="
+
 
 class LessOrEqualElement(CompareElement):
     sign = "<="

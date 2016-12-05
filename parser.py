@@ -1,7 +1,6 @@
-from elements.block import Block
+from elements.code_segment import Block
 from elements.line import Line
 from utils.config import FILENAME
-from utils.util import is_pre_block_command
 
 
 class Parser:
@@ -18,7 +17,6 @@ class Parser:
         f.close()
 
         self.blocks = self.blockify(self.parse_to_blocks(self.data))
-
 
     def parse_to_blocks(self, string):
         """Parse raw string to blocks
@@ -93,12 +91,9 @@ class Parser:
         for element in blocks:
             if type(element) == str:
                 element_list.append(Line(element))
-                print("added line element")
             else:
-                print("adding block")
                 new_block = self.blockify(element)
-                if element_list and is_pre_block_command(element_list[-1]):
-                    print("found")
+                if element_list and element_list[-1].is_pre_block():
                     element_list[-1].command.set_block(new_block)
                 else:
                     element_list.append(new_block)
@@ -108,6 +103,7 @@ class Parser:
 
     def write_out(self):
         print(self.blocks)
+
 
 if __name__ == "__main__":
 

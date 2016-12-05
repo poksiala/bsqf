@@ -1,39 +1,9 @@
 from abc import ABCMeta, abstractmethod
 
-from utils.config import *
-
-
-class CodeSegment(metaclass=ABCMeta):
-    parent = None
-
-    def set_parent(self, parent):
-        self.parent = parent
-
-    def get_level(self, level=0):
-        if self.parent is not None:
-            return self.parent.get_level(level+1)
-        else:
-            return level
-
-    def indent(self):
-        return " " * INDENT_WIDTH * self.get_level()
-
-    @abstractmethod
-    def write_out(self, sqf=False):
-        pass
-
-    def write_sqf(self):
-        return self.write_out(sqf=True)
-
-    def __str__(self):
-        string = self.write_out()
-        return str(string)
-
 
 class GenericElement(metaclass=ABCMeta):
 
     parent = None
-
     type = None
 
     # Types from OFP
@@ -172,7 +142,8 @@ class ElifElement(ControlElement):
                                                           self.block.write_sqf())
         else:
             return "elif ({})\n {} ".format(self.condition.write_out(),
-                                          self.block.write_out())
+                                            self.block.write_out())
+
 
 class WhileElement(ControlElement):
 
@@ -200,6 +171,7 @@ class HintElement(CommandElement):
         else:
             return "hint({})".format(self.param.write_out())
 
+
 class RandomElement(CommandElement):
 
     def __init__(self, param1: GenericElement, param2: GenericElement):
@@ -214,8 +186,8 @@ class RandomElement(CommandElement):
     def write_out(self, sqf=False):
         if sqf:
             return "({} + floor random ({} - {}))".format(self.param1.write_sqf(),
-                                                           self.param2.write_sqf(),
-                                                           self.param1.write_sqf())
+                                                          self.param2.write_sqf(),
+                                                          self.param1.write_sqf())
         else:
             return "random({},{})".format(self.param1.write_out(),
                                           self.param2.write_out())
