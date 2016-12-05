@@ -81,6 +81,14 @@ class Parser:
         return clear_data
 
     def blockify(self, blocks):
+        """Get block elements
+
+        Turns mutidimensionla list to elements.block.Block style
+        Blocks.
+
+        :param blocks: multidimensional list
+        :return: Block
+        """
         element_list = []
         for element in blocks:
             if type(element) == str:

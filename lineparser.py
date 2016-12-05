@@ -11,13 +11,20 @@ class LineParser:
         self.mixed_list = self.get_literal_elements(self.segmented_line)
         self.hierarchy = self.get_hierarchy(self.mixed_list)
         self.command = flatten(self.get_commands(self.hierarchy))[0]
-    def parse_line(self):
 
 
+    def divide_into_segments(self, line: str) -> list:
+        """Divide string to segments
 
-        return None
+        Method divides given string to logical code segments
+        starting from left to right.
 
-    def divide_into_segments(self, line):
+        example: '"asd"+(random(1,5) == var123)'
+        would produce: ", asd, ", +, (, random, (, 1, 5, ), ==, var123, )
+
+        :param line: str
+        :return: list
+        """
         operators = ["=", "!", "<", ">", "|", "&"]
         segment_list = []
         looking_for = None
@@ -60,7 +67,21 @@ class LineParser:
 
         return segment_list
 
-    def get_literal_elements(self, segment_list: list):
+    def get_literal_elements(self, segment_list: list) -> list:
+        """Get literal elements
+
+        Method goes trough list and forms string and num literals
+        as well as variables.
+
+        -   String literals are limited by " (' doesnt work)
+        -   Num literals are segments only containing digits.
+            decimals are not yet supported.
+        -   Variables are alphanumeric segments that don't
+            match to any supported commands
+
+        :param segment_list: list
+        :return: list
+        """
         # get string elements
         new_list = []
         to_be_joined = []
@@ -93,7 +114,19 @@ class LineParser:
 
         return another_list
 
-    def get_hierarchy(self, segment_list):
+    def get_hierarchy(self, segment_list: list) -> list:
+        """Get hierarchy
+
+        Method goes trough the list given as a parameter
+        and parses it to multidimensional list based on "("
+        and ")" cells found in it.
+
+        example ["a", "(", "b", ")", "c"] would return
+        the following: ["a", ["b"], "c"]
+
+        :param segment_list: One dimensional list
+        :return: Multidimensional list
+        """
         element_list = []
         index = 0
         in_sublist = 0
@@ -175,6 +208,7 @@ class LineParser:
 
 
 if __name__ == "__main__":
+    # For testing purposes
     test_lines = [
         'hint("asd")',
         'random(random(1, 2),random(4,5))',

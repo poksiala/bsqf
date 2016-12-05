@@ -6,6 +6,8 @@ if (lol == 4) {
     hint("toimii")
 } elif (lol == 3) {
     hint("no ei ihan");
+} elif (asd == 2) {
+    hint("Lykky!");
 } else {
     hint("not amused")
 }
