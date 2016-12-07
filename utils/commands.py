@@ -45,6 +45,7 @@ TWO_SIDED_COMMANDS = {
     "**": PowerElement,
     "+=": AdditionElement,
     "-=": NegationElement,
+    ".select": SelectElement,
 
 
 }

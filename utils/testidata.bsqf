@@ -1,5 +1,2 @@
-# luku kertoo jotain
 
-lista = [1, 2, 3];
-lista.forEach{hint(_x);}
-[1, 2, 3].forEach{hint(_x);}
+hint([[1,2],[3,4]].select(1).select(0));

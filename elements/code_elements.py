@@ -152,6 +152,7 @@ class ForEachElement(ControlElement):
             return "{}.forEach({})".format(self.condition.write_out(),
                                            self.block.write_out())
 
+
 class HintElement(CommandElement):
     return_type = VOID
 
@@ -334,3 +335,18 @@ class LogElement(NumToNumElement):
 
 class RoundElement(NumToNumElement):
     name = "round"
+
+class SelectElement(CommandElement):
+    return_type = ANY
+
+    def __init__(self, array: GenericElement, index: GenericElement):
+        self.array = array
+        self.index = index
+
+    def write_out(self, sqf=False):
+        if sqf:
+            return "{} select {} ".format(self.array.write_sqf(),
+                                          self.index.write_sqf())
+        else:
+            return "{}.select({})".format(self.array.write_out(),
+                                          self.index.write_out())

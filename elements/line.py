@@ -54,7 +54,6 @@ def parse_line(string: str) -> GenericElement:
     segmented_line = divide_into_segments(string)
     mixed_list = get_literal_elements(segmented_line)
     hierarchy = get_hierarchy(mixed_list)
-    print(get_commands(hierarchy))
     command = flatten(get_commands(hierarchy))[0]
     return command
 
