@@ -49,3 +49,11 @@ def merge_two_dicts(x: dict, y: dict) -> dict:
     z = x.copy()
     z.update(y)
     return z
+
+
+def is_num(string: str) -> bool:
+    try:
+        float(string)
+        return True
+    except:
+        return False

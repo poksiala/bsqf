@@ -1,8 +1,7 @@
-from elements.code_elements import GenericElement, VariableElement
 from elements.code_segment import CodeSegment
 from elements.datatype_elements import StringElement, NumberElement, ArrayElement
 from utils.commands import *
-from utils.util import flatten
+from utils.util import flatten, is_num
 
 
 class Line(CodeSegment):
@@ -164,7 +163,7 @@ def divide_into_segments(string: str) -> list:
     end = False
     for i in range(len(string)):
         if looking_for == "int":
-            if not string[i].isdigit():
+            if not string[i].isdigit() and string[i] != ".":
                 end = i
         if looking_for == "str":
             if not string[i].isalnum():
@@ -235,7 +234,7 @@ def get_literal_elements(segment_list: list) -> list:
     another_list = []
     for segment in new_list:
         if type(segment) is str:
-            if segment.isdigit():
+            if is_num(segment):
                 another_list.append(NumberElement(segment))
             elif segment.isalnum() and segment not in ALL_COMMANDS.keys():
                 another_list.append(VariableElement(segment))

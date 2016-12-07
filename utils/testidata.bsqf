@@ -3,7 +3,7 @@ joo = [1, "kaks", kolme];
 tokalista = [[lista, "listan", "sisällä"], ["testi"], 5];
 jou = 1 + 2 + 3 + 4 + 5;
 lol = 4;
-lol += 1;
+lol += 1.5;
 asd = random(1, 6);
 if (lol == 4) {
     hint("toimii")

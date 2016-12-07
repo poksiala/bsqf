@@ -45,7 +45,6 @@ class VariableElement(GenericElement):
 
 
 class SetElement(CommandElement):
-
     return_type = VOID
 
     def __init__(self, left: VariableElement, right: GenericElement):
@@ -57,6 +56,7 @@ class SetElement(CommandElement):
                                 self.right.write_out(sqf))
 
 class AdditionElement(SetElement):
+    return_type = VOID
 
     def write_out(self, sqf=False):
         if sqf:
@@ -69,6 +69,7 @@ class AdditionElement(SetElement):
 
 
 class NegationElement(SetElement):
+    return_type = VOID
 
     def write_out(self, sqf=False):
         if sqf:
