@@ -76,7 +76,12 @@ def get_hierarchy(segment_list: list) -> list:
     index = 0
     in_sublist = 0
     while index < len(segment_list):
-        if in_sublist == 0:
+        if segment_list[index] == "=":
+            # single equals-operator is a special case
+            element_list.append(segment_list[index])
+            element_list.append(get_hierarchy(segment_list[index+1:]))
+            index = len(segment_list)
+        elif in_sublist == 0:
             if segment_list[index] == "(":
                 in_sublist += 1
                 returned_list = get_hierarchy(segment_list[index+1:])
@@ -93,11 +98,11 @@ def get_hierarchy(segment_list: list) -> list:
         else:
             pass
         index += 1
+
     return element_list
 
 
 def get_commands(hl: list):
-    # TODO: Special case =
     # TODO: Maths: order of computation
     i = 0
     command_list = []
