@@ -1,7 +1,7 @@
 from elements.code_elements import *
 from elements.compare_elements import *
 from elements.math_elements import *
-from utils.util import merge_two_dicts
+from utils.util import merge_multiple_dicts
 
 
 COMMANDS = {
@@ -45,12 +45,18 @@ TWO_SIDED_COMMANDS = {
     "**": PowerElement,
     "+=": AdditionElement,
     "-=": NegationElement,
+
+
 }
 
 SET_COMMANDS = {
     "+=": AdditionElement,
     "-=": NegationElement,
     "=": SetElement,
+}
+
+ARRAY_COMMANDS = {
+    ".forEach": ForEachElement,
 }
 
 
@@ -61,7 +67,7 @@ NO_PARAM_COMMANDS = {
 
 
 
-ALL_COMMANDS = merge_two_dicts(COMMANDS, merge_two_dicts(TWO_SIDED_COMMANDS, NO_PARAM_COMMANDS))
+ALL_COMMANDS = merge_multiple_dicts(COMMANDS, TWO_SIDED_COMMANDS, NO_PARAM_COMMANDS, ARRAY_COMMANDS)
 
 
 PRE_BLOCK_COMMANDS = (
@@ -69,4 +75,5 @@ PRE_BLOCK_COMMANDS = (
     ElifElement,
     ElseElement,
     WhileElement,
+    ForEachElement,
 )

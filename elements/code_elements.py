@@ -142,6 +142,16 @@ class WhileElement(ControlElement):
                                           self.block.write_out())
 
 
+class ForEachElement(ControlElement):
+    # TODO: doen't output semicolons correctly
+    def write_out(self, sqf=False):
+        if sqf:
+            return "{} forEach {}".format(self.block.write_sqf(),
+                                          self.condition.write_sqf())
+        else:
+            return "{}.forEach({})".format(self.condition.write_out(),
+                                           self.block.write_out())
+
 class HintElement(CommandElement):
     return_type = VOID
 

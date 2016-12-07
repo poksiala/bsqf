@@ -1,7 +1,7 @@
 from elements.code_segment import CodeSegment
 from elements.datatype_elements import StringElement, NumberElement, ArrayElement
 from utils.commands import *
-from utils.util import flatten, is_num
+from utils.util import flatten, is_num, is_variable_like
 
 
 class Line(CodeSegment):
@@ -54,6 +54,7 @@ def parse_line(string: str) -> GenericElement:
     segmented_line = divide_into_segments(string)
     mixed_list = get_literal_elements(segmented_line)
     hierarchy = get_hierarchy(mixed_list)
+    print(get_commands(hierarchy))
     command = flatten(get_commands(hierarchy))[0]
     return command
 
@@ -134,6 +135,9 @@ def get_commands(hl: list):
                     NO_PARAM_COMMANDS[hl[i]]()
                 )
                 i += 1
+            elif hl[i] in ARRAY_COMMANDS:
+                command_list.append(
+                    create_command(hl[i],command_list.pop()))
             else:
                 command_list.append(hl[i])
         else:
@@ -186,7 +190,7 @@ def divide_into_segments(string: str) -> list:
                 start = -1
             elif string[i].isdigit():
                 looking_for = "int"
-            elif string[i].isalpha():
+            elif string[i].isalpha() or string[i] in [".", "_"]:
                 looking_for = "str"
             elif string[i] in operators:
                 looking_for = "operator"
@@ -236,7 +240,7 @@ def get_literal_elements(segment_list: list) -> list:
         if type(segment) is str:
             if is_num(segment):
                 another_list.append(NumberElement(segment))
-            elif segment.isalnum() and segment not in ALL_COMMANDS.keys():
+            elif is_variable_like(segment) and segment not in ALL_COMMANDS.keys():
                 another_list.append(VariableElement(segment))
             else:
                 another_list.append(segment)
@@ -269,7 +273,7 @@ def create_command(command: str, params):
 
     args = flatten(params)
     try:
-        return COMMANDS[command](*args)
+        return ALL_COMMANDS[command](*args)
     except TypeError:
         print("### ERROR WHILE:")
         print("creating command: {}({})".format(str(command), str(args)))

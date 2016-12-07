@@ -1,5 +1,4 @@
 
-
 def recursive_print(data, level=0, indent=4):
     """Recursive list print
 
@@ -51,9 +50,23 @@ def merge_two_dicts(x: dict, y: dict) -> dict:
     return z
 
 
+def merge_multiple_dicts(*args) -> dict:
+    merged = dict()
+    for d in args:
+        merged = merge_two_dicts(merged, d)
+    return merged
+
+
 def is_num(string: str) -> bool:
     try:
         float(string)
         return True
     except:
+        return False
+
+
+def is_variable_like(string: str) -> bool:
+    if not string[0].isdigit() and string.replace("_", "").isalnum():
+        return True
+    else:
         return False
