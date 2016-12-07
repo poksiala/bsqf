@@ -1,6 +1,6 @@
 from elements.code_elements import GenericElement, VariableElement
 from elements.code_segment import CodeSegment
-from elements.datatype_elements import StringElement, NumberElement
+from elements.datatype_elements import StringElement, NumberElement, ArrayElement
 from utils.commands import COMMANDS, TWO_SIDED_COMMANDS, NO_PARAM_COMMANDS, ALL_COMMANDS, PRE_BLOCK_COMMANDS
 from utils.util import flatten
 
@@ -59,7 +59,8 @@ def parse_line(string: str) -> GenericElement:
     return command
 
 
-def get_hierarchy(segment_list: list) -> list:
+def get_hierarchy(segment_list: list, opening: str= "(",
+                  closing: str= ")", ignore_equals: bool=False) -> list:
     """Get hierarchy
 
     Method goes trough the list given as a parameter
@@ -76,24 +77,24 @@ def get_hierarchy(segment_list: list) -> list:
     index = 0
     in_sublist = 0
     while index < len(segment_list):
-        if segment_list[index] == "=":
+        if segment_list[index] == "=" and not ignore_equals:
             # single equals-operator is a special case
             element_list.append(segment_list[index])
-            element_list.append(get_hierarchy(segment_list[index+1:]))
+            element_list.append(get_hierarchy(segment_list[index+1:], opening, closing, ignore_equals))
             index = len(segment_list)
         elif in_sublist == 0:
-            if segment_list[index] == "(":
+            if segment_list[index] == opening:
                 in_sublist += 1
-                returned_list = get_hierarchy(segment_list[index+1:])
+                returned_list = get_hierarchy(segment_list[index+1:], opening, closing, ignore_equals)
                 element_list.append(returned_list)
-            elif segment_list[index] == ")":
+            elif segment_list[index] == closing:
                 return element_list
             else:
                 element_list.append(segment_list[index])
 
-        elif segment_list[index] == "(":
+        elif segment_list[index] == opening:
             in_sublist += 1
-        elif segment_list[index] == ")":
+        elif segment_list[index] == closing:
             in_sublist -= 1
         else:
             pass
@@ -242,7 +243,28 @@ def get_literal_elements(segment_list: list) -> list:
         else:
             another_list.append(segment)
 
-    return another_list
+    hierarchical_list = get_hierarchy(another_list, "[", "]", True)
+    returned_list = get_array_elements(hierarchical_list)
+    results = flatten(returned_list)
+
+    return results
+
+def get_array_elements(l: list, level: int=0) -> list:
+    results = []
+    for e in l:
+        if type(e) is list:
+            results.append(get_array_elements(e, level+1)[0])
+        else:
+            results.append(e)
+
+    if level > 0:
+        a = ArrayElement()
+        a.add_element_list(results)
+        return [a]
+    else:
+        return results
+
+
 
 
 def create_command(command: str, params):

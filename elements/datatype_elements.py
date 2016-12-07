@@ -21,6 +21,13 @@ class ArrayElement(GenericElement):
     def __init__(self):
         self.contents = []
 
+    def add_element(self, element: GenericElement):
+        self.contents.append(element)
+
+    def add_element_list(self, element_list: list):
+        for element in element_list:
+            self.add_element(element)
+
     def write_out(self, sqf=False):
         array_str = "["
         for element in self.contents:
