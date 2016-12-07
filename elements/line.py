@@ -1,7 +1,7 @@
 from elements.code_elements import GenericElement, VariableElement
 from elements.code_segment import CodeSegment
 from elements.datatype_elements import StringElement, NumberElement, ArrayElement
-from utils.commands import COMMANDS, TWO_SIDED_COMMANDS, NO_PARAM_COMMANDS, ALL_COMMANDS, PRE_BLOCK_COMMANDS
+from utils.commands import *
 from utils.util import flatten
 
 
@@ -77,24 +77,25 @@ def get_hierarchy(segment_list: list, opening: str= "(",
     index = 0
     in_sublist = 0
     while index < len(segment_list):
-        if segment_list[index] == "=" and not ignore_equals:
-            # single equals-operator is a special case
-            element_list.append(segment_list[index])
+        current = segment_list[index]
+        if current in SET_COMMANDS and not ignore_equals:
+            # =, -= and += are special
+            element_list.append(current)
             element_list.append(get_hierarchy(segment_list[index+1:], opening, closing, ignore_equals))
             index = len(segment_list)
         elif in_sublist == 0:
-            if segment_list[index] == opening:
+            if current == opening:
                 in_sublist += 1
                 returned_list = get_hierarchy(segment_list[index+1:], opening, closing, ignore_equals)
                 element_list.append(returned_list)
-            elif segment_list[index] == closing:
+            elif current == closing:
                 return element_list
             else:
-                element_list.append(segment_list[index])
+                element_list.append(current)
 
-        elif segment_list[index] == opening:
+        elif current == opening:
             in_sublist += 1
-        elif segment_list[index] == closing:
+        elif current == closing:
             in_sublist -= 1
         else:
             pass
@@ -155,7 +156,8 @@ def divide_into_segments(string: str) -> list:
     :param string: str
     :return: list
     """
-    operators = ["=", "!", "<", ">", "|", "&"]
+    # TODO: use regular expressions
+    operators = ["=", "!", "<", ">", "|", "&", "+", "-"]
     segment_list = []
     looking_for = None
     start = -1
@@ -194,7 +196,6 @@ def divide_into_segments(string: str) -> list:
 
     if looking_for is not None:
         segment_list.append(string[start:])
-
     return segment_list
 
 
@@ -263,8 +264,6 @@ def get_array_elements(l: list, level: int=0) -> list:
         return [a]
     else:
         return results
-
-
 
 
 def create_command(command: str, params):

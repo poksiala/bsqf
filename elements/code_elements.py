@@ -56,6 +56,31 @@ class SetElement(CommandElement):
         return "{} = {}".format(self.left.write_out(sqf),
                                 self.right.write_out(sqf))
 
+class AdditionElement(SetElement):
+
+    def write_out(self, sqf=False):
+        if sqf:
+            return "{} = {} + {}".format(self.left.write_sqf(),
+                                         self.left.write_sqf(),
+                                         self.right.write_sqf())
+        else:
+            return "{} += {}".format(self.left.write_out(),
+                                     self.right.write_out())
+
+
+class NegationElement(SetElement):
+
+    def write_out(self, sqf=False):
+        if sqf:
+            return "{} = {} - {}".format(self.left.write_sqf(),
+                                         self.left.write_sqf(),
+                                         self.right.write_sqf())
+        else:
+            return "{} -= {}".format(self.left.write_out(),
+                                     self.right.write_out())
+
+
+
 
 class ControlElement(CommandElement, metaclass=ABCMeta):
 

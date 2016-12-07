@@ -42,7 +42,15 @@ TWO_SIDED_COMMANDS = {
     "!=": NotEqualsElement,
     "%": RemainderElement,
     "^": PowerElement,
-    "**": PowerElement
+    "**": PowerElement,
+    "+=": AdditionElement,
+    "-=": NegationElement,
+}
+
+SET_COMMANDS = {
+    "+=": AdditionElement,
+    "-=": NegationElement,
+    "=": SetElement,
 }
 
 
@@ -50,6 +58,7 @@ NO_PARAM_COMMANDS = {
     "else": ElseElement,
     "player": PlayerElement,
 }
+
 
 
 ALL_COMMANDS = merge_two_dicts(COMMANDS, merge_two_dicts(TWO_SIDED_COMMANDS, NO_PARAM_COMMANDS))
