@@ -120,6 +120,45 @@ def read_file(path: str) -> str:
             string += l.strip()
     return string
 
+def get_hierarchy(string: str) -> list:
+    """Get hierarchy
+
+    Parses given string and returns a hierarchic list
+    based on normal and curly parentheses found in in it.
+
+    Example:
+    >>> get_hierarchy("abc(d{ef})g")
+    ['abc', ['d', ['ef']], 'g']
+
+    :param string: string
+    :return: list
+    """
+    hl = [] # hierarchy list
+    i = 0   # index
+    d = 0   # depth
+    ts = "" # temp string
+    for i in range(len(string)):
+        c = string[i]
+        if d < 0:
+            break
+        elif c in ("(", "{"):
+            if d == 0:
+                hl.append(ts)
+                ts = ""
+                hl.append(get_hierarchy(string[i+1:]))
+            d += 1
+        elif c in (")", "}"):
+            d -= 1
+        elif d == 0:
+            ts += c
+        else:
+            pass
+    if ts:
+        hl.append(ts)
+    return hl
+
+
+
 if __name__ == "__main__":
 
     a = Parser(FILENAME).blocks
