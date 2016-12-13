@@ -113,13 +113,19 @@ def read_file(path: str) -> str:
     whitespace from every line and returns all it's contents
     in one, single line string.
 
+    It also clears rest of the line after comment marker "//"
+
     :param path: /path/to/file
     :return: file as a string
     """
     string = ""
     with open(path) as f:
         for l in f.readlines():
-            string += l.strip()
+            s = l.strip()
+            # clear comments
+            if "//" in s:
+                s = s[:s.index("//")]
+            string += s
     return string
 
 
