@@ -1,6 +1,7 @@
 from elements.code_segment import Block
 from elements.line import Line
 from utils.config import FILENAME
+from elements.brackets import CurlyList, RoundList
 
 
 class Parser:
@@ -104,6 +105,7 @@ class Parser:
     def write_out(self):
         print(self.blocks)
 
+
 def read_file(path: str) -> str:
     """Read file
 
@@ -120,6 +122,7 @@ def read_file(path: str) -> str:
             string += l.strip()
     return string
 
+
 def get_hierarchy(string: str) -> list:
     """Get hierarchy
 
@@ -133,10 +136,9 @@ def get_hierarchy(string: str) -> list:
     :param string: string
     :return: list
     """
-    hl = [] # hierarchy list
-    i = 0   # index
-    d = 0   # depth
-    ts = "" # temp string
+    hl = []     # hierarchy list
+    d = 0       # depth
+    ts = ""     # temp string
     for i in range(len(string)):
         c = string[i]
         if d < 0:
@@ -145,7 +147,11 @@ def get_hierarchy(string: str) -> list:
             if d == 0:
                 hl.append(ts)
                 ts = ""
-                hl.append(get_hierarchy(string[i+1:]))
+                # select correct list extension
+                if c == "(":
+                    hl.append(RoundList(get_hierarchy(string[i + 1:])))
+                else:
+                    hl.append(CurlyList(get_hierarchy(string[i + 1:])))
             d += 1
         elif c in (")", "}"):
             d -= 1
@@ -156,7 +162,6 @@ def get_hierarchy(string: str) -> list:
     if ts:
         hl.append(ts)
     return hl
-
 
 
 if __name__ == "__main__":

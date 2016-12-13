@@ -1,3 +1,4 @@
+from elements.brackets import *
 
 def recursive_print(data, level=0, indent=4):
     """Recursive list print
@@ -8,7 +9,7 @@ def recursive_print(data, level=0, indent=4):
     :return: None
     """
     for i in range(0, len(data)):
-        if type(data[i]) is not list:
+        if not isinstance(data[i], list):
             print(" " * indent * level + str(data[i]))
         else:
             recursive_print(data[i], level + 1)
