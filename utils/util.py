@@ -14,6 +14,24 @@ def recursive_print(data, level=0, indent=4):
             recursive_print(data[i], level + 1)
 
 
+def recursive_apply(l: list, f) -> list:
+    new_list = []
+    for e in l:
+        if type(e) is list:
+            new_list.append(recursive_apply(e, f))
+        else:
+            new_list.append(f(e))
+    return new_list
+
+
+def recursive_do(l: list, f):
+    for e in l:
+        if type(e) is list:
+            recursive_do(e, f)
+        else:
+            f(e)
+
+
 def flatten(l: list) -> list:
     """Flatten list
 
