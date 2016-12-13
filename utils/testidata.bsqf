@@ -1,2 +1,22 @@
 
-hint([[1,2],[3,4]].select(1).select(0));
+hint([[1,2],[3,4]][1][2]);
+
+hint("kek");
+hint(1 - (2-2));
+
+b = 1;
+a = b;
+
+if (a == b) {
+    hint("j");
+} elif (a < b) {
+    hint("nope");
+} else {
+    hint("nope " + str(random(6));
+}
+
+for (i = 0; i < 10; i++) {
+    for (j = 10; j > 0; j--) {
+        hint(str(i) + " " + str(j));
+    }
+}

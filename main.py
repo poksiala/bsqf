@@ -1,16 +1,16 @@
 from utils.config import FILENAME
-from parser import Parser
+from parser import read_file, get_hierarchy
+from utils.util import recursive_print
 
 if __name__ == "__main__":
-    b = Parser(FILENAME).blocks
-
     print("#### ORIGINAL")
     with open(FILENAME) as f:
         for l in f.readlines():
             print(l)
 
-    print("\n\n#### BSQF")
-    print(b.write_out())
+    s = read_file(FILENAME)
+    print(s)
 
-    print("\n\n#### SQF")
-    print(b.write_sqf())
+    h = get_hierarchy(s)
+    recursive_print(h)
+    print(h)
