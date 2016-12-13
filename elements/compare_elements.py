@@ -52,7 +52,7 @@ class GreaterOrEqualElement(CompareElement):
 
 
 class LessElement(CompareElement):
-    sign = "<="
+    sign = "<"
 
 
 class LessOrEqualElement(CompareElement):
