@@ -143,7 +143,7 @@ random(max);
 random(min, max);
 
 // random float with Gaussian distribution
-random(min, mid, max);
+random(min, max, mid);
 
 // random int between min and max
 randomInt(min, max);
