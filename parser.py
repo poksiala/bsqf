@@ -105,6 +105,15 @@ class Parser:
         print(self.blocks)
 
 def read_file(path: str) -> str:
+    """Read file
+
+    reads the file in path stripping all leading and trailing
+    whitespace from every line and returns all it's contents
+    in one, single line string.
+
+    :param path: /path/to/file
+    :return: file as a string
+    """
     string = ""
     with open(path) as f:
         for l in f.readlines():
