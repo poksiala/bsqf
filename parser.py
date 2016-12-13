@@ -104,6 +104,12 @@ class Parser:
     def write_out(self):
         print(self.blocks)
 
+def read_file(path: str) -> str:
+    string = ""
+    with open(path) as f:
+        for l in f.readlines():
+            string += l.strip()
+    return string
 
 if __name__ == "__main__":
 
