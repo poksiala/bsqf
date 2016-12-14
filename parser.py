@@ -170,6 +170,58 @@ def get_hierarchy(string: str) -> list:
     return hl
 
 
+def recursive_split_lines(l: list) -> list:
+    """Split lines
+
+    goes trough multidimensional list and splits strings at ";"
+    character. Preserves list types.
+
+    :param l: list
+    :return: list
+    """
+    s = []
+    for e in l:
+        if type(e) == str:
+            s += e.split(";")
+        elif isinstance(e, CurlyList):
+            s.append(CurlyList(recursive_split_lines(e)))
+        elif isinstance(e, RoundList):
+            s.append(RoundList(recursive_split_lines(e)))
+        else:   # is normal list
+            s.append(recursive_split_lines(e))
+    return s
+
+
+def clear_empties(l: list) -> list:
+    """Clear empty strings
+
+    recursively clears all empty strings from multidimensional list.
+    preserves list types
+
+    :param l: Multidimensional list containing strings
+    :return: Multidimensional list containing strings
+    """
+    # TODO: error handling
+    cl = []     # cleared list
+    for e in l:
+        t = type(e)
+        if t == str and len(e) > 0:
+                cl.append(e)
+        elif isinstance(e, list):
+            r = clear_empties(e)
+            if len(r) == 0:  # is empty list
+                pass
+            elif t == CurlyList:
+                cl.append(CurlyList(r))
+            elif t == RoundList:
+                cl.append(RoundList(r))
+            else:   # is normal list
+                cl.append(r)
+        else:   # empty string
+            pass
+    return cl
+
+
 if __name__ == "__main__":
 
     a = Parser(FILENAME).blocks
